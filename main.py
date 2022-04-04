@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 from loginform import LoginForm
 from data import db_session
 
@@ -11,6 +11,7 @@ app.config['SECRET_KEY'] = 'my_strong_secret_key'
 def index():
     user = "Ученик Яндекс.Лицея"
     return render_template('index.html', title='Домашняя страница', username=user)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
