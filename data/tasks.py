@@ -12,3 +12,4 @@ class Task(SqlAlchemyBase):
     text = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     board = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     background = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    example = sqlalchemy.Column(sqlalchemy.String, nullable=True)
