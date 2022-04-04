@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="RU">
+<meta charset="utf-8">
+
+<head>
+    <title>Цветной фон</title>
+    <style>
+        #canvas {
+            background-image: url(pics/fon1.png);
+            /* Путь к фоновому изображению */
+            width: 400px;
+            height: 400px;
+            border: 1px;
+            position: relative;
+        }
+        
+        #ant {
+            width: 50px;
+            height: 50px;
+            background-image: url(pics/ant_l.png);
+            position: absolute;
+            left: 150px;
+            top: 200px;
+        }
+        #aLetter {
+            width: 50px;
+            height: 50px;
+            background-image: url(pics/a.png);
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+        
+        #wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .coding {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .canvas {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="btn-group">
+            <button class="button" onclick="addText('вправо')">вправо</button><br><br>
+            <button class="button" onclick="addText('влево')">влево</button><br><br>
+            <button class="button" onclick="addText('вверх')">вверх</button><br><br>
+            <button class="button" onclick="addText('вниз')">вниз</button><br><br>
+        </div>
+        <div id="coding">
+            <p><textarea rows="30" cols="20" id="code"></textarea></p>
+            <button onclick="runCode()">Выполнить</button><br><br>
+        </div>
+        <div id="canvas">
+            <div id="ant"></div>
+            <div id="aLetter"></div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script>
+        let direction = "stop";
+        let stepOn = false;
+        let antTop = 0;
+        let antLleft = 0;
+        let map = [
+            [1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 1, 1, 1, 1, 1, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 1, 0, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 0, 0, 1, 1],
+            [0, 0, 0, 0, 0, 0, 0, 1]
+        ];
+        let objectLayer = [
+            [9, 2, 2, 2, 2, 2, 2, 2],
+            [2, 2, 2, 2, 2, 2, 2, 2],
+            [2, 2, 2, 2, 2, 2, 2, 2],
+            [2, 2, 2, 2, 2, 2, 2, 2],
+            [2, 2, 2, 101, 2, 2, 2, 2],
+            [2, 2, 2, 2, 2, 2, 2, 2],
+            [2, 2, 2, 2, 2, 2, 2, 2],
+            [2, 2, 2, 2, 2, 2, 2, 2]
+        ];
+        function addText(text) {
+            code = document.getElementById("code");
+            code.value += text + " ";
+        }
+
+        function moveRight() {
+            ant = document.getElementById("ant");
+            ant.style.backgroundImage = "url('pics/ant_r.png')";
+            ant.style.left = antLeft + 50 + "px";
+        }
+
+        function moveLeft() {
+            ant = document.getElementById("ant");
+            ant.style.backgroundImage = "url('pics/ant_l.png')";
+            ant.style.left = antLeft - 50 + "px";
+        }
+
+        function moveUp() {
+            ant = document.getElementById("ant");
+            ant.style.top = antTop - 50 + "px";
+        }
+
+        function moveDown() {
+            ant = document.getElementById("ant");
+            ant.style.top = antTop + 50 + "px";
+        }
+        var m = function moving(step, lenPath, direction) {
+            stepOn = true
+            step++;
+            if (direction === "вправо") {
+                moveRight();
+                antLeft += 50;
+            } else if (direction === "влево") {
+                moveLeft();
+                antLeft -= 50;
+            } else if (direction === "вверх") {
+                moveUp();
+                antTop -= 50;
+            } else if (direction === "вниз") {
+                moveDown();
+                antTop += 50;
+            }
+            if (step < lenPath - 1) {
+                setTimeout(m.bind(null, step, lenPath, direction), 500);
+            } else {
+                stepOn = false;
+            }
+        }
+
+        var r = function running(code, line) {
+            line++;
+            if (line < code.length - 1) {
+                command = code[line].split(" ");
+                direction = command[0];
+                lenPath = command[1];
+                step = -1;
+                setTimeout(m.bind(null, step, lenPath, direction), 500);
+                i = 0;
+                while (window.stepOn) {
+                    i++;
+                }
+                setTimeout(r.bind(null, code, line), 500);
+            }
+        }
+
+        function runCode() {
+            ant = document.getElementById("ant");
+            ant.style.left = "0px";
+            ant.style.top = "0px";
+            antTop = 0;
+            antLeft = 0;
+            code = document.getElementById("code");
+            var codeLines = code.value.split("\n");
+            line = -1;
+            setTimeout(r.bind(null, codeLines, line), 500);
+        }
+    </script>
+</body>
+
+</html>
