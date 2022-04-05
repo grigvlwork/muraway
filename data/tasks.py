@@ -13,3 +13,6 @@ class Task(SqlAlchemyBase):
     board = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     background = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     example = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    goal = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    is_common = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False,
+                                  default=False)
