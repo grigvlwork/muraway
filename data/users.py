@@ -1,16 +1,18 @@
 import datetime
 import sqlalchemy
+from flask_login import UserMixin
 from .db_session import SqlAlchemyBase
 
 
-class User(SqlAlchemyBase):
+
+class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
-    first_name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    last_name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    surname = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    surname = sqlalchemy.Column(sqlalchemy.String, nullable=True)  # Фамилия
+    first_name = sqlalchemy.Column(sqlalchemy.String, nullable=True)  # Имя
+    last_name = sqlalchemy.Column(sqlalchemy.String, nullable=True)  # Отчество
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     login = sqlalchemy.Column(sqlalchemy.String,
                               index=True, unique=True, nullable=False)
@@ -19,6 +21,4 @@ class User(SqlAlchemyBase):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
-    is_teacher = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False,
-                                   default=False)
-
+    role = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)  # 0 - admin, 1 - teacher, 2 - pupil
