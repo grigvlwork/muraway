@@ -12,10 +12,7 @@ class User(SqlAlchemyBase, UserMixin):
                            primary_key=True, autoincrement=True)
     surname = sqlalchemy.Column(sqlalchemy.String, nullable=True)  # Фамилия
     first_name = sqlalchemy.Column(sqlalchemy.String, nullable=True)  # Имя
-    last_name = sqlalchemy.Column(sqlalchemy.String, nullable=True)  # Отчество
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    login = sqlalchemy.Column(sqlalchemy.String,
-                              index=True, unique=True, nullable=False)
     email = sqlalchemy.Column(sqlalchemy.String,
                               index=True, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
