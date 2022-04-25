@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 
 <head>
-    <title>Цветной фон</title>
+    <title>Муравей</title>
     <style>
         #canvas {
             background-image: url(pics/fon1.png);
@@ -19,22 +19,23 @@
             height: 50px;
             background-image: url(pics/ant_l.png);
             position: absolute;
-            left: 150px;
-            top: 200px;
+            left: 0;
+            top: 0;
         }
         #aLetter {
             width: 50px;
             height: 50px;
             background-image: url(pics/a.png);
             position: absolute;
-            left: 0px;
-            top: 0px;
+            left: 150px;
+            top: 150px;
+            visibility: visible;
         }
         
         #wrapper {
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
+            justify-content:flex-start;
         }
         
         .btn-group {
@@ -42,14 +43,14 @@
             flex-direction: column;
         }
         
-        .coding {
+        #coding {
             display: flex;
             flex-direction: column;
         }
         
-        .canvas {
-            flex-grow: 1;
-        }
+        /*#canvas {*/
+        /*    flex-grow: 1;*/
+        /*}*/
     </style>
 </head>
 
@@ -62,7 +63,7 @@
             <button class="button" onclick="addText('вниз')">вниз</button><br><br>
         </div>
         <div id="coding">
-            <p><textarea rows="30" cols="20" id="code"></textarea></p>
+            <p><label for="code"></label><textarea rows="30" cols="20" id="code"></textarea></p>
             <button onclick="runCode()">Выполнить</button><br><br>
         </div>
         <div id="canvas">
@@ -72,7 +73,7 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script>
-        let direction = "stop";
+        // let direction = "stop";
         let stepOn = false;
         let antTop = 0;
         let antLleft = 0;
@@ -122,7 +123,7 @@
             ant = document.getElementById("ant");
             ant.style.top = antTop + 50 + "px";
         }
-        var m = function moving(step, lenPath, direction) {
+        let m = function moving(step, lenPath, direction) {
             stepOn = true
             step++;
             if (direction === "вправо") {
@@ -147,13 +148,17 @@
 
         var r = function running(code, line) {
             line++;
-            if (line < code.length - 1) {
+            let command;
+            let direction;
+            let lenPath;
+            let step;
+            if (line < code.length) {
                 command = code[line].split(" ");
                 direction = command[0];
                 lenPath = command[1];
                 step = -1;
                 setTimeout(m.bind(null, step, lenPath, direction), 500);
-                i = 0;
+                let i = 0;
                 while (window.stepOn) {
                     i++;
                 }
