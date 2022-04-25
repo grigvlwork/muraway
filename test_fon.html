@@ -13,7 +13,7 @@
             border: 1px;
             position: relative;
         }
-        
+
         #ant {
             width: 50px;
             height: 50px;
@@ -31,23 +31,23 @@
             top: 150px;
             visibility: visible;
         }
-        
+
         #wrapper {
             display: flex;
             flex-direction: row;
             justify-content:flex-start;
         }
-        
+
         .btn-group {
             display: flex;
             flex-direction: column;
         }
-        
+
         #coding {
             display: flex;
             flex-direction: column;
         }
-        
+
         /*#canvas {*/
         /*    flex-grow: 1;*/
         /*}*/
@@ -173,9 +173,32 @@
             antTop = 0;
             antLeft = 0;
             code = document.getElementById("code");
-            var codeLines = code.value.split("\n");
-            line = -1;
-            setTimeout(r.bind(null, codeLines, line), 500);
+            let codeLines = code.value.split("\n");
+            codeLines.forEach( (commandLine) => {
+                command = commandLine.split(" ");
+                direction = command[0];
+                lenPath = command[1];
+                let dLeft;
+                let dTop;
+                if (direction === "вправо") {
+                    dTop = 0;
+                    dLeft = 50;
+                } else if (direction === "влево") {
+                    dTop = 0;
+                    dLeft = -50;
+                } else if (direction === "вверх") {
+                    dTop = -50;
+                    dLeft = 0;
+                } else if (direction === "вниз") {
+                    dTop = -50;
+                    dLeft = 0;
+                }
+                for (let i = lenPath - 1; i >= 0; i--) {
+                    ant.style.left += dLeft;
+                    ant.style.top += dTop;
+                }
+            });
+            // setTimeout(r.bind(null, codeLines, line), 500);
         }
     </script>
 </body>
