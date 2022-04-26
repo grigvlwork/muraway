@@ -4,6 +4,8 @@
 
 <head>
     <title>Муравей</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
     <style>
         #canvas {
             background-image: url(pics/fon1.png);
@@ -17,7 +19,7 @@
         #ant {
             width: 50px;
             height: 50px;
-            background-image: url(pics/ant_l.png);
+            background-image: url(pics/ant_r.png);
             position: absolute;
             left: 0;
             top: 0;
@@ -29,23 +31,20 @@
             position: absolute;
             left: 150px;
             top: 150px;
-            visibility: visible;
-        }
-
-        #wrapper {
-            display: flex;
-            flex-direction: row;
-            justify-content:flex-start;
-        }
-
-        .btn-group {
-            display: flex;
-            flex-direction: column;
+            visibility: hidden;
         }
 
         #coding {
             display: flex;
             flex-direction: column;
+            color: blue;
+            font-size: large;
+            font-family: "Courier New";
+        }
+        #messages {
+            display: flex;
+            flex-direction: column;
+            color: red;
         }
 
         /*#canvas {*/
@@ -55,28 +54,64 @@
 </head>
 
 <body>
-    <div id="wrapper">
-        <div class="btn-group">
-            <button class="button" onclick="addText('вправо')">вправо</button><br><br>
-            <button class="button" onclick="addText('влево')">влево</button><br><br>
-            <button class="button" onclick="addText('вверх')">вверх</button><br><br>
-            <button class="button" onclick="addText('вниз')">вниз</button><br><br>
-        </div>
-        <div id="coding">
-            <p><label for="code"></label><textarea rows="30" cols="20" id="code"></textarea></p>
-            <button onclick="runCode()">Выполнить</button><br><br>
-        </div>
-        <div id="canvas">
-            <div id="ant"></div>
-            <div id="aLetter"></div>
+    <div class="container">
+        <div class="row justify-content-start">
+            <div class="col align-self-start">
+                <div class="row">
+                    <div class="col">
+                        <button type="button" class="btn btn-primary" onclick="addText('вправо')">вправо</button>
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-primary" onclick="addText('влево')">влево</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button type="button" class="btn btn-primary" onclick="addText('вверх')">вверх</button><br>
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-primary" onclick="addText('вниз')">вниз</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col align-self-start">
+                <label for="coding"></label><textarea rows="20" cols="30" id="coding"></textarea>
+                <div class="row">
+                    <div class="col">
+                        <button type="button" class="btn btn-primary" onclick="runCode()">Выполнить</button>
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-danger" onclick="delCode()">Очистить</button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col align-self-start">
+                <label for="message"></label><textarea rows="20" cols="30" id="message"></textarea>
+            </div>
+            <div class="col align-self-start">
+                <div id="canvas">
+                    <div id="ant"></div>
+                    <div id="aLetter"></div>
+                </div>
+            </div>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="jquery.cookie.js"></script>
     <script>
         // let direction = "stop";
         let stepOn = false;
         let antTop = 0;
-        let antLleft = 0;
+        let antLeft = 0;
+        $.cookie('codeLines');
+        if(typeof codeLines == undefined){}
+        else{
+            code = document.getElementById("coding");
+            code.value = $.cookie('codeLines');
+        }
         let map = [
             [1, 1, 0, 0, 0, 0, 0, 0],
             [0, 1, 1, 1, 1, 1, 0, 0],
@@ -98,8 +133,8 @@
             [2, 2, 2, 2, 2, 2, 2, 2]
         ];
         function addText(text) {
-            code = document.getElementById("code");
-            code.value += text + " ";
+            code = document.getElementById("coding");
+            code.value += text + " \n";
         }
 
         function moveRight() {
@@ -165,19 +200,24 @@
                 setTimeout(r.bind(null, code, line), 500);
             }
         }
-
+        function delCode() {
+            code = document.getElementById("coding");
+            code.value = "";
+        }
         function runCode() {
             ant = document.getElementById("ant");
             ant.style.left = "0px";
             ant.style.top = "0px";
             antTop = 0;
             antLeft = 0;
-            code = document.getElementById("code");
+            code = document.getElementById("coding");
+            $.cookie('codeLines', code.value);
             let codeLines = code.value.split("\n");
             codeLines.forEach( (commandLine) => {
                 command = commandLine.split(" ");
+                // alert(command)
                 direction = command[0];
-                lenPath = command[1];
+                lenPath = Number(command[1]);
                 let dLeft;
                 let dTop;
                 if (direction === "вправо") {
