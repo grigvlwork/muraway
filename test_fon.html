@@ -9,7 +9,6 @@
     <style>
         #canvas {
             background-image: url(pics/fon1.png);
-            /* Путь к фоновому изображению */
             width: 400px;
             height: 400px;
             border: 1px;
@@ -43,9 +42,6 @@
             font-size: large;
         }
 
-        /*#canvas {*/
-        /*    flex-grow: 1;*/
-        /*}*/
     </style>
 </head>
 
@@ -101,7 +97,7 @@
         let antTop = 0;
         let antLeft = 0;
         $.cookie('codeLines');
-        if(typeof codeLines == undefined){
+        if(typeof codeLines === undefined){
             code = document.getElementById("coding");
             code.value = "";
         }
@@ -201,6 +197,7 @@
             code = document.getElementById("coding");
             code.value = "";
         }
+        //TODO чтобы работал runCode
         function runCode() {
             ant = document.getElementById("ant");
             ant.style.left = "0px";
