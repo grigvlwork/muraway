@@ -35,16 +35,12 @@
         }
 
         #coding {
-            display: flex;
-            flex-direction: column;
             color: blue;
             font-size: large;
-            font-family: "Courier New";
         }
-        #messages {
-            display: flex;
-            flex-direction: column;
+        #message {
             color: red;
+            font-size: large;
         }
 
         /*#canvas {*/
@@ -74,7 +70,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col align-self-start">
+            <div class="col">
                 <label for="coding"></label><textarea rows="20" cols="30" id="coding"></textarea>
                 <div class="row">
                     <div class="col">
@@ -84,10 +80,8 @@
                         <button type="button" class="btn btn-danger" onclick="delCode()">Очистить</button>
                     </div>
                 </div>
-
-
             </div>
-            <div class="col align-self-start">
+            <div class="col">
                 <label for="message"></label><textarea rows="20" cols="30" id="message"></textarea>
             </div>
             <div class="col align-self-start">
@@ -107,7 +101,10 @@
         let antTop = 0;
         let antLeft = 0;
         $.cookie('codeLines');
-        if(typeof codeLines == undefined){}
+        if(typeof codeLines == undefined){
+            code = document.getElementById("coding");
+            code.value = "";
+        }
         else{
             code = document.getElementById("coding");
             code.value = $.cookie('codeLines');
