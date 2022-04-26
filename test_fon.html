@@ -211,7 +211,7 @@
                 command = commandLine.split(" ");
                 // alert(command)
                 direction = command[0];
-                lenPath = Number(command[1]);
+                lenPath = command[1];
                 let dLeft;
                 let dTop;
                 if (direction === "вправо") {
@@ -228,8 +228,11 @@
                     dLeft = 0;
                 }
                 for (let i = lenPath - 1; i >= 0; i--) {
-                    ant.style.left += dLeft;
-                    ant.style.top += dTop;
+                    alert(i);
+                    antLeft += dLeft;
+                    antTop += dTop;
+                    ant.style.left = antLeft;
+                    ant.style.top = antTop;
                 }
             });
             // setTimeout(r.bind(null, codeLines, line), 500);
