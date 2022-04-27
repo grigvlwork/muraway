@@ -209,37 +209,30 @@
             antTop = 0;
             antLeft = 0;
             code = document.getElementById("coding");
+            message = document.getElementById("message");
             $.cookie('codeLines', code.value);
             let codeLines = code.value.split("\n");
             codeLines.forEach( (commandLine) => {
                 command = commandLine.split(" ");
-                // alert(command)
                 direction = command[0];
                 lenPath = command[1];
+                message.value += command[0] + "\n";
                 let dLeft;
                 let dTop;
+                let timerId;
                 if (direction === "вправо") {
-                    dTop = 0;
-                    dLeft = 50;
+                    timerId = setInterval(() => moveRight(), 500);
                 } else if (direction === "влево") {
-                    dTop = 0;
-                    dLeft = -50;
+                    timerId = setInterval(() => moveLeft(), 5000);
+                    setTimeout(() => { clearInterval(timerId); }, 5000 * (lenPath + 1));
                 } else if (direction === "вверх") {
-                    dTop = -50;
-                    dLeft = 0;
+                    timerId = setInterval(() => moveUp(), 5000);
+                    setTimeout(() => { clearInterval(timerId);}, 5000 * (lenPath + 1));
                 } else if (direction === "вниз") {
-                    dTop = -50;
-                    dLeft = 0;
-                }
-                for (let i = lenPath - 1; i >= 0; i--) {
-                    alert(i);
-                    antLeft += dLeft;
-                    antTop += dTop;
-                    ant.style.left = antLeft;
-                    ant.style.top = antTop;
+                    timerId = setInterval(() => moveDown(), 5000);
+                    setTimeout(() => { clearInterval(timerId);}, 5000 * (lenPath + 1));
                 }
             });
-            // setTimeout(r.bind(null, codeLines, line), 500);
         }
     </script>
 </body>
