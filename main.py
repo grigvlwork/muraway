@@ -16,10 +16,11 @@ def load_user(user_id):
     db_sess = db_session.create_session()
     return db_sess.query(User).get(user_id)
 
+//TODO добавить страницу с муравьем
 @app.route('/')
 @app.route('/index')
 def index():
-    user = "Ученик Яндекс.Лицея"
+    user = "Ученик Горностая"
     return render_template('index.html', title='Домашняя страница', username=user)
 
 
