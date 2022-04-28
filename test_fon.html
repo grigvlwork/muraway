@@ -61,8 +61,11 @@
                 <label for="coding"></label><textarea rows="20" cols="30" id="coding"></textarea>
                 <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                     <button type="button" class="btn btn-primary" onclick="runCode()">Выполнить</button>
+                    <button type="button" class="btn btn-warning" onclick="runCode()">Шаг</button>
                     <button type="button" class="btn btn-danger" onclick="delCode()">Очистить</button>
                 </div>
+                <label for="Velocity" class="form-label">Скорость движения</label>
+                <input type="range" class="form-range" min="1" max="5" value="1" id="Velocity">
             </div>
             <div class="col">
                 <label for="message"></label><textarea rows="20" cols="30" id="message"></textarea>
