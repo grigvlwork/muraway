@@ -88,7 +88,7 @@
         let antLeft = 0;
         let codeLines;
         $.cookie('codeLines');
-        if(typeof codeLines === undefined){
+        if(codeLines === undefined){
             code = document.getElementById("coding");
             code.value = "";
         }
@@ -200,11 +200,20 @@
             antLeft = 0;
             code = document.getElementById("coding");
             message = document.getElementById("message");
+            message.value = "";
             $.cookie('codeLines', code.value);
             let codeLines = code.value.split("\n");
             let steps = 0;
-            codeLines.forEach( (commandLine) => {steps += commandLine.split(" ")[1]});
-
+            codeLines.forEach((commandLine) => {
+                if (commandLine.length > 5){
+                    command = commandLine.split(" ");
+                    lenPath = command[1];
+                    steps += lenPath
+                }
+            });
+            let velocity = document.getElementById("Velocity");
+            let duration = 480 * steps / Number(velocity.value);
+            alert(duration);
             codeLines.forEach( (commandLine) => {
                 command = commandLine.split(" ");
                 direction = command[0];
