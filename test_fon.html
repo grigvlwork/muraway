@@ -91,11 +91,11 @@
     <script>
         $('#stepOn').click(function(){
             if ($(this).is(':checked')){
-                $('#run').disabled = true;
-                $('#step').disabled = false;
+                $('#run').attr('disabled', 'disabled');
+                $('#step').removeAttr('disabled');
             } else {
-                $('#run').disabled = false;
-                $('#step').disabled = true;
+                $('#run').removeAttr('disabled');
+                $('#step').attr('disabled', 'disabled');
             }
         });
     </script>
