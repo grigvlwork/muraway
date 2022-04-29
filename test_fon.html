@@ -62,13 +62,17 @@
             <div class="col">
                 <label for="coding"></label><textarea rows="20" cols="30" id="coding"></textarea>
                 <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                    <button type="button" class="btn btn-primary" onclick="runCode()">Выполнить</button>
-                    <button type="button" class="btn btn-warning" onclick="runCode()">Шаг</button>
-                    <button type="button" class="btn btn-danger" onclick="stopCode()">Стоп</button>
-                    <button type="button" class="btn btn-warning" onclick="delCode()">Очистить</button>
+                    <button type="button" class="btn btn-primary" onclick="runCode()" id="run">Выполнить</button>
+                    <button type="button" class="btn btn-warning" onclick="runCode()" disabled="true" id="step">Шаг</button>
+                    <button type="button" class="btn btn-danger" onclick="stopCode()" id="stop">Стоп</button>
+                    <button type="button" class="btn btn-warning" onclick="delCode()" id="clear">Очистить</button>
                 </div>
                 <label for="Velocity" class="form-label">Скорость движения</label>
-                <input type="range" class="form-range" min="1" max="5" value="1" id="Velocity">
+                <input type="range" class="form-range" min="1" max="10" value="1" id="Velocity">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="stepOn">
+                    <label class="form-check-label" for="stepOn">Пошаговое выполнение</label>
+                </div>
             </div>
             <div class="col">
                 <label for="message"></label><textarea rows="20" cols="30" id="message"></textarea>
@@ -85,12 +89,24 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="jquery.cookie.js"></script>
     <script>
-        // let direction = "stop";
+        $('#stepOn').click(function(){
+            if ($(this).is(':checked')){
+                $('#run').disabled = true;
+                $('#step').disabled = false;
+            } else {
+                $('#run').disabled = false;
+                $('#step').disabled = true;
+            }
+        });
+    </script>
+    <script>
         let stepOn = false;
         let antTop = 0;
         let antLeft = 0;
-        let codeLines;
+        var codeLines;
         var animationId;
+        var stepFraction;
+        var durationRun;
         $.cookie('codeLines');
         if(codeLines === undefined){
             code = document.getElementById("coding");
@@ -126,69 +142,6 @@
             code.value += text + " \n";
         }
 
-        function moveRight() {
-            ant = document.getElementById("ant");
-            ant.style.backgroundImage = "url('pics/ant_r.png')";
-            ant.style.left = antLeft + 50 + "px";
-        }
-
-        function moveLeft() {
-            ant = document.getElementById("ant");
-            ant.style.backgroundImage = "url('pics/ant_l.png')";
-            ant.style.left = antLeft - 50 + "px";
-        }
-
-        function moveUp() {
-            ant = document.getElementById("ant");
-            ant.style.top = antTop - 50 + "px";
-        }
-
-        function moveDown() {
-            ant = document.getElementById("ant");
-            ant.style.top = antTop + 50 + "px";
-        }
-        let m = function moving(step, lenPath, direction) {
-            stepOn = true
-            step++;
-            if (direction === "вправо") {
-                moveRight();
-                antLeft += 50;
-            } else if (direction === "влево") {
-                moveLeft();
-                antLeft -= 50;
-            } else if (direction === "вверх") {
-                moveUp();
-                antTop -= 50;
-            } else if (direction === "вниз") {
-                moveDown();
-                antTop += 50;
-            }
-            if (step < lenPath - 1) {
-                setTimeout(m.bind(null, step, lenPath, direction), 500);
-            } else {
-                stepOn = false;
-            }
-        }
-
-        let r = function running(code, line) {
-            line++;
-            let command;
-            let direction;
-            let lenPath;
-            let step;
-            if (line < code.length) {
-                command = code[line].split(" ");
-                direction = command[0];
-                lenPath = command[1];
-                step = -1;
-                setTimeout(m.bind(null, step, lenPath, direction), 500);
-                let i = 0;
-                while (window.stepOn) {
-                    i++;
-                }
-                setTimeout(r.bind(null, code, line), 500);
-            }
-        }
         function delCode() {
             code = document.getElementById("coding");
             code.value = "";
@@ -198,9 +151,19 @@
                 cancelAnimationFrame(animationId);
             }
         }
-        //TODO чтобы работал runCode
+        //
         // https://learn.javascript.ru/js-animation
         // https://css-tricks.com/using-requestanimationframe/
+        function animate({timing, draw, duration}) {
+            let start = performance.now();
+            requestAnimationFrame(function animate(time) {
+                let timeFraction = (time - start) / duration;
+                draw(timeFraction); // отрисовать её
+                if (timeFraction < 1) {
+                    requestAnimationFrame(animate);
+                }
+            });
+        }
         function runCode() {
             let command;
             let lenPath;
@@ -212,6 +175,7 @@
             code = document.getElementById("coding");
             let message = document.getElementById("message");
             message.value = "";
+            //TODO починить куки
             $.cookie('codeLines', code.value);
             let codeLines = code.value.split("\n");
             let steps = 0;
@@ -222,31 +186,70 @@
                     steps += Number(lenPath);
                 }
             });
+            stepFraction = steps > 0 ? 1 / steps : 1;
             let velocity = document.getElementById("Velocity");
-            let duration = 480 * steps / Number(velocity.value);
-            alert(duration);
-            codeLines.forEach( commandLine => {
-                command = commandLine.split(" ");
-                direction = command[0];
-                lenPath = Number(command[1]);
-                message.value += command[0] + "\n";
-                // let dLeft;
-                // let dTop;
-                let timerId;
-                if (direction === "вправо") {
-                    timerId = setInterval(() => moveRight(), 500);
-                } else if (direction === "влево") {
-                    timerId = setInterval(() => moveLeft(), 5000);
-                    setTimeout(() => { clearInterval(timerId); }, 5000 * (lenPath + 1));
-                } else if (direction === "вверх") {
-                    timerId = setInterval(() => moveUp(), 5000);
-                    setTimeout(() => { clearInterval(timerId);}, 5000 * (lenPath + 1));
-                } else if (direction === "вниз") {
-                    timerId = setInterval(() => moveDown(), 5000);
-                    setTimeout(() => { clearInterval(timerId);}, 5000 * (lenPath + 1));
+            durationRun = 480 * steps / Number(velocity.value);
+            animate({
+                duration: durationRun,
+                timing: function(timeFraction) {
+                    return timeFraction;
+                },
+                draw: function(progress) {
+                    let dTop = 0;
+                    let dLeft = 0;
+                    let commandLine;
+                    let command;
+                    let i = 0;
+                    let stepsToGo = 0;
+                    if (codeLines[i].length > 5){
+                        commandLine = codeLines[i];
+                        command = commandLine.split(" ");
+                        stepsToGo = Number(command[1]);
+                    }
+                    ant = document.getElementById("ant");
+                    while(progress > stepFraction){
+                        if (stepsToGo === 0) {
+                            if (codeLines[i].length > 5) {
+                                commandLine = codeLines[i];
+                                command = commandLine.split(" ");
+                                stepsToGo = Number(command[1]);
+                            }
+                        }
+                        if (command[0] === "влево"){
+                            dLeft -= 50;
+                            ant.style.backgroundImage = "url('pics/ant_l.png')";
+                        } else if (command[0] === "вправо"){
+                            dLeft += 50;
+                            ant.style.backgroundImage = "url('pics/ant_r.png')";
+                        } else if (command[0] === "вверх"){
+                            dTop -= 50;
+                        } else if (command[0] === "вниз"){
+                            dTop += 50;
+                        }
+                        progress -= stepFraction;
+                        stepsToGo--;
+                        if (stepsToGo === 0){
+                            i++;
+                        }
+                    }
+                    if (command[0] === "влево"){
+                        dLeft -= 50 * progress;
+                        ant.style.backgroundImage = "url('pics/ant_l.png')";
+                    } else if (command[0] === "вправо"){
+                        dLeft += 50 * progress;
+                        ant.style.backgroundImage = "url('pics/ant_r.png')";
+                    } else if (command[0] === "вверх"){
+                        dTop -= 50 * progress;
+                    } else if (command[0] === "вниз"){
+                        dTop += 50 * progress;
+                    }
+                    ant.style.top = dTop + "px";
+                    ant.style.left = dLeft + "px";
                 }
             });
         }
+
+
     </script>
 </body>
 
