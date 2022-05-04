@@ -103,7 +103,7 @@
         let antTop = 0;
         let antLeft = 0;
         var codeLines;
-        var animationId;
+        var stopAnimation = false;
         var stepFraction;
         var durationRun;
         codeLines = $.cookie('codeLines');
@@ -146,9 +146,10 @@
             code.value = "";
         }
         function stopCode(){
-            if(!!animationId){
-                cancelAnimationFrame(animationId);
-            }
+            stopAnimation = true;
+            ant = document.getElementById("ant");
+            ant.style.left = "0px";
+            ant.style.top = "0px";
         }
         //
         // https://learn.javascript.ru/js-animation
@@ -187,12 +188,14 @@
             stepFraction = steps > 0 ? 1 / steps : 1;
             let velocity = document.getElementById("Velocity");
             durationRun = 480 * steps / Number(velocity.value);
+            //TODO сделать плавную анимацию
             animate({
                 duration: durationRun,
                 timing: function(timeFraction) {
                     return timeFraction;
                 },
                 draw: function(progress) {
+                    if (stopAnimation) return;
                     let dTop = 0;
                     let dLeft = 0;
                     let commandLine;
