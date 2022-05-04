@@ -100,14 +100,13 @@
         });
     </script>
     <script>
-        let stepOn = false;
         let antTop = 0;
         let antLeft = 0;
         var codeLines;
         var animationId;
         var stepFraction;
         var durationRun;
-        $.cookie('codeLines');
+        codeLines = $.cookie('codeLines');
         if(codeLines === undefined){
             code = document.getElementById("coding");
             code.value = "";
@@ -175,7 +174,6 @@
             code = document.getElementById("coding");
             let message = document.getElementById("message");
             message.value = "";
-            //TODO починить куки
             $.cookie('codeLines', code.value);
             let codeLines = code.value.split("\n");
             let steps = 0;
