@@ -209,7 +209,7 @@
                         stepsToGo = Number(command[1]);
                     }
                     ant = document.getElementById("ant");
-                    while(progress - elapsed > stepFraction * (stepsToGo)){
+                    while(progress - elapsed > stepFraction * stepsToGo){
                         if (codeLines[i].length > 5) {
                             commandLine = codeLines[i];
                             command = commandLine.split(" ");
@@ -219,29 +219,29 @@
                             continue;
                         }
                         if (command[0] === "влево"){
-                            dLeft -= 50 * stepsToGo;
+                            dLeft -= 50 * (progress - elapsed);
                             ant.style.backgroundImage = "url('pics/ant_l.png')";
                         } else if (command[0] === "вправо"){
-                            dLeft += 50 * stepsToGo;
+                            dLeft += 50 * (progress - elapsed);
                             ant.style.backgroundImage = "url('pics/ant_r.png')";
                         } else if (command[0] === "вверх"){
-                            dTop -= 50 * stepsToGo;
+                            dTop -= 50 * (progress - elapsed);
                         } else if (command[0] === "вниз"){
-                            dTop += 50 * stepsToGo;
+                            dTop += 50 * (progress - elapsed);
                         }
                         elapsed += stepFraction * stepsToGo;
                         i++;
                     }
                     if (command[0] === "влево"){
-                        dLeft -= 50 * progress;
+                        dLeft -= 50 * (progress - elapsed);
                         ant.style.backgroundImage = "url('pics/ant_l.png')";
                     } else if (command[0] === "вправо"){
-                        dLeft += 50 * progress;
+                        dLeft += 50 * (progress - elapsed);
                         ant.style.backgroundImage = "url('pics/ant_r.png')";
                     } else if (command[0] === "вверх"){
-                        dTop -= 50 * progress;
+                        dTop -= 50 * (progress - elapsed);
                     } else if (command[0] === "вниз"){
-                        dTop += 50 * progress;
+                        dTop += 50 * (progress - elapsed);
                     }
                     ant.style.top = dTop + "px";
                     ant.style.left = dLeft + "px";
