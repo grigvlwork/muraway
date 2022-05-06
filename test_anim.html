@@ -176,14 +176,13 @@
             let message = document.getElementById("message");
             message.value = "";
             $.cookie('codeLines', code.value);
-            let codeLines = code.value.split("\n");
+            let tmpCodeLines = code.value.split("\n");
+            codeLines = tmpCodeLines.filter(value => value !== "");
             let steps = 0;
             codeLines.forEach((commandLine) => {
-                if (commandLine.length > 5){
-                    command = commandLine.split(" ");
-                    lenPath = command[1];
-                    steps += Number(lenPath);
-                }
+                command = commandLine.split(" ");
+                lenPath = command[1];
+                steps += Number(lenPath);
             });
             stepFraction = steps > 0 ? 1 / steps : 1;
             let velocity = document.getElementById("Velocity");
@@ -202,46 +201,40 @@
                     let command;
                     let i = 0
                     let elapsed = 0
+                    let stepsAll = Math.floor(progress / stepFraction);
                     let stepsToGo = 0;
-                    if (codeLines[i].length > 5){
+                    commandLine = codeLines[i];
+                    command = commandLine.split(" ");
+                    stepsToGo = Number(command[1]);
+                    ant = document.getElementById("ant");
+                    while(elapsed + stepsToGo < stepsAll){
+                        if (command[0] === "влево"){
+                            dLeft -= 50 * stepsToGo;
+                            ant.style.backgroundImage = "url('pics/ant_l.png')";
+                        } else if (command[0] === "вправо"){
+                            dLeft += 50 * stepsToGo;
+                            ant.style.backgroundImage = "url('pics/ant_r.png')";
+                        } else if (command[0] === "вверх"){
+                            dTop -= 50 * stepsToGo;
+                        } else if (command[0] === "вниз"){
+                            dTop += 50 * stepsToGo;
+                        }
+                        elapsed += stepsToGo;
+                        i++;
                         commandLine = codeLines[i];
                         command = commandLine.split(" ");
                         stepsToGo = Number(command[1]);
                     }
-                    ant = document.getElementById("ant");
-                    while(progress - elapsed > stepFraction * stepsToGo){
-                        if (codeLines[i].length > 5) {
-                            commandLine = codeLines[i];
-                            command = commandLine.split(" ");
-                            stepsToGo = Number(command[1]);
-                        } else {
-                            i++;
-                            continue;
-                        }
-                        if (command[0] === "влево"){
-                            dLeft -= 50 * (progress - elapsed);
-                            ant.style.backgroundImage = "url('pics/ant_l.png')";
-                        } else if (command[0] === "вправо"){
-                            dLeft += 50 * (progress - elapsed);
-                            ant.style.backgroundImage = "url('pics/ant_r.png')";
-                        } else if (command[0] === "вверх"){
-                            dTop -= 50 * (progress - elapsed);
-                        } else if (command[0] === "вниз"){
-                            dTop += 50 * (progress - elapsed);
-                        }
-                        elapsed += stepFraction * stepsToGo;
-                        i++;
-                    }
                     if (command[0] === "влево"){
-                        dLeft -= 50 * (progress - elapsed);
+                        dLeft -= 50 * (stepsAll - elapsed) * stepFraction;
                         ant.style.backgroundImage = "url('pics/ant_l.png')";
                     } else if (command[0] === "вправо"){
-                        dLeft += 50 * (progress - elapsed);
+                        dLeft += 50 * (stepsAll - elapsed) * stepFraction;
                         ant.style.backgroundImage = "url('pics/ant_r.png')";
                     } else if (command[0] === "вверх"){
-                        dTop -= 50 * (progress - elapsed);
+                        dTop -= 50 * (stepsAll - elapsed) * stepFraction;
                     } else if (command[0] === "вниз"){
-                        dTop += 50 * (progress - elapsed);
+                        dTop += 50 * (stepsAll - elapsed) * stepFraction;
                     }
                     ant.style.top = dTop + "px";
                     ant.style.left = dLeft + "px";
