@@ -104,7 +104,7 @@
         let antLeft = 0;
         var codeLines;
         var stopAnimation = false;
-        var stepFraction;
+        var running = false;
         var durationRun;
         codeLines = $.cookie('codeLines');
         if(codeLines === undefined){
@@ -161,6 +161,8 @@
                 draw(timeFraction); // отрисовать её
                 if (timeFraction < 1) {
                     requestAnimationFrame(animate);
+                } else {
+                    running = false;
                 }
             });
         }
@@ -172,76 +174,58 @@
             ant.style.top = "0px";
             antTop = 0;
             antLeft = 0;
+            let dTop = 0;
+            let dLeft = 0;
             code = document.getElementById("coding");
             let message = document.getElementById("message");
             message.value = "";
             $.cookie('codeLines', code.value);
             let tmpCodeLines = code.value.split("\n");
             codeLines = tmpCodeLines.filter(value => value !== "");
-            let steps = 0;
+            let moves = [];
             codeLines.forEach((commandLine) => {
                 command = commandLine.split(" ");
                 lenPath = command[1];
-                steps += Number(lenPath);
+                for(let i = 0; i < lenPath; i++) moves.push(command[0]);
             });
-            stepFraction = steps > 0 ? 1 / steps : 1;
             let velocity = document.getElementById("Velocity");
-            durationRun = 480 * steps / Number(velocity.value);
+            durationRun = 480 / Number(velocity.value);
             //TODO сделать плавную анимацию
-            animate({
-                duration: durationRun,
-                timing: function(timeFraction) {
-                    return timeFraction;
-                },
-                draw: function(progress) {
-                    if (stopAnimation) return;
-                    let dTop = 0;
-                    let dLeft = 0;
-                    let commandLine;
-                    let command;
-                    let i = 0
-                    let elapsed = 0
-                    let stepsAll = Math.floor(progress / stepFraction);
-                    let stepsToGo = 0;
-                    commandLine = codeLines[i];
-                    command = commandLine.split(" ");
-                    stepsToGo = Number(command[1]);
-                    ant = document.getElementById("ant");
-                    while(elapsed + stepsToGo < stepsAll){
-                        if (command[0] === "влево"){
-                            dLeft -= 50 * stepsToGo;
-                            ant.style.backgroundImage = "url('pics/ant_l.png')";
-                        } else if (command[0] === "вправо"){
-                            dLeft += 50 * stepsToGo;
-                            ant.style.backgroundImage = "url('pics/ant_r.png')";
-                        } else if (command[0] === "вверх"){
-                            dTop -= 50 * stepsToGo;
-                        } else if (command[0] === "вниз"){
-                            dTop += 50 * stepsToGo;
+            let i = -1;
+            running = false;
+            let move;
+            while (i < moves.length){
+                if (!running){
+                    i += 1;
+                    move = moves[i];
+                    message.value += move + "/n";
+                    running = true;
+                    animate({
+                        duration: durationRun,
+                        timing: function(timeFraction) {
+                            return timeFraction;
+                        },
+                        draw: function(progress) {
+                            if (stopAnimation) return;
+                            ant = document.getElementById("ant");
+                            if (move === "влево"){
+                                dLeft = 50 * progress;
+                                ant.style.backgroundImage = "url('pics/ant_l.png')";
+                            } else if (move === "вправо"){
+                                dLeft = 50 * progress;
+                                ant.style.backgroundImage = "url('pics/ant_r.png')";
+                            } else if (move === "вверх"){
+                                dTop = 50 * progress;
+                            } else if (move === "вниз"){
+                                dTop = 50 * progress;
+                            }
+                            ant.style.top = dTop + "px";
+                            ant.style.left = dLeft + "px";
                         }
-                        elapsed += stepsToGo;
-                        i++;
-                        commandLine = codeLines[i];
-                        command = commandLine.split(" ");
-                        stepsToGo = Number(command[1]);
-                    }
-                    if (command[0] === "влево"){
-                        dLeft -= 50 * (stepsAll - elapsed) * stepFraction;
-                        ant.style.backgroundImage = "url('pics/ant_l.png')";
-                    } else if (command[0] === "вправо"){
-                        dLeft += 50 * (stepsAll - elapsed) * stepFraction;
-                        ant.style.backgroundImage = "url('pics/ant_r.png')";
-                    } else if (command[0] === "вверх"){
-                        dTop -= 50 * (stepsAll - elapsed) * stepFraction;
-                    } else if (command[0] === "вниз"){
-                        dTop += 50 * (stepsAll - elapsed) * stepFraction;
-                    }
-                    ant.style.top = dTop + "px";
-                    ant.style.left = dLeft + "px";
+                    });
                 }
-            });
+            }
         }
-
 
     </script>
 </body>
