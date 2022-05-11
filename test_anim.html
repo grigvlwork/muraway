@@ -154,6 +154,16 @@
         //
         // https://learn.javascript.ru/js-animation
         // https://css-tricks.com/using-requestanimationframe/
+        function animate({timing, draw, duration}) {
+            let start = performance.now();
+            requestAnimationFrame(function animate(time) {
+                let timeFraction = (time - start) / duration;
+                draw(timeFraction); // отрисовать её
+                if (timeFraction < 1) {
+                    requestAnimationFrame(animate);
+                }
+            });
+        }
         function runCode() {
             let command;
             let lenPath;
@@ -162,41 +172,62 @@
             ant.style.top = "0px";
             antTop = 0;
             antLeft = 0;
-            let dTop = 0;
-            let dLeft = 0;
             code = document.getElementById("coding");
             let message = document.getElementById("message");
             message.value = "";
             $.cookie('codeLines', code.value);
-            let tmpCodeLines = code.value.split("\n");
-            codeLines = tmpCodeLines.filter(value => value !== "");
+            let codeLines = code.value.split("\n");
+            codeLines = codeLines.filter(value => value !== "");
             let moves = [];
             codeLines.forEach((commandLine) => {
                 command = commandLine.split(" ");
-                lenPath = command[1];
-                for(let i = 0; i < lenPath; i++) moves.push(command[0]);
+                for(let i = 0; i < Number(command[1]); i++) moves.push(command[0]);
             });
+            steps = moves.length;
+            stepFraction = steps > 0 ? 1 / steps : 1;
             let velocity = document.getElementById("Velocity");
-            durationRun = 480 / Number(velocity.value);
-            let delta = durationRun / 50;
+            durationRun = 480 * steps / Number(velocity.value);
             //TODO сделать плавную анимацию
-            moves.forEach(move => {
-                start = performance.now();
-                while((performance.now() - start) < delta ){;}
-                if (move === "влево"){
-                    dLeft -= 1;
-                    ant.style.backgroundImage = "url('pics/ant_l.png')";
-                } else if (move === "вправо"){
-                    dLeft += 1;
-                    ant.style.backgroundImage = "url('pics/ant_r.png')";
-                } else if (move === "вверх"){
-                    dTop -= 1;
-                } else if (move === "вниз"){
-                    dTop += 1;
+            animate({
+                duration: durationRun,
+                timing: function(timeFraction) {
+                    return timeFraction;
+                },
+                draw: function(progress) {
+                    if (stopAnimation) return;
+                    let dTop = 0;
+                    let dLeft = 0;
+                    let i;
+                    let steps = Math.floor(progress / stepFraction);
+                    for(i = 0; i < steps - 1; i++){
+                        if (moves[i] === "влево"){
+                            dLeft -= 50;
+                        } else if (moves[i] === "вправо"){
+                            dLeft += 50;
+                        } else if (moves[i] === "вверх"){
+                            dTop -= 50;
+                        } else if (moves[i] === "вниз"){
+                            dTop += 50;
+                        }
+                    }
+                    i = steps - 1;
+                    let stepProgress = progress - stepFraction * i;
+                    console.log(i + " " + stepProgress);
+                    let koefficient = 650;
+                    if (moves[i] === "влево"){
+                        dLeft -= koefficient * stepProgress;
+                        ant.style.backgroundImage = "url('pics/ant_l.png')";
+                    } else if (moves[i] === "вправо"){
+                        dLeft += koefficient * stepProgress;
+                        ant.style.backgroundImage = "url('pics/ant_r.png')";
+                    } else if (moves[i] === "вверх"){
+                        dTop -= koefficient * stepProgress;
+                    } else if (moves[i] === "вниз"){
+                        dTop += koefficient * stepProgress;
+                    }
+                    ant.style.top = dTop + "px";
+                    ant.style.left = dLeft + "px";
                 }
-                ant.style.top = dTop + "px";
-                ant.style.left = dLeft + "px";
-                start = performance.now();
             });
         }
     </script>
