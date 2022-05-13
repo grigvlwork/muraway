@@ -187,7 +187,6 @@
             stepFraction = steps > 0 ? 1 / steps : 1;
             let velocity = document.getElementById("Velocity");
             durationRun = 480 * steps / Number(velocity.value);
-            //TODO сделать плавную анимацию
             animate({
                 duration: durationRun,
                 timing: function(timeFraction) {
@@ -199,32 +198,20 @@
                     let dLeft = 0;
                     let i;
                     let steps = Math.floor(progress / stepFraction);
-                    for(i = 0; i < steps - 1; i++){
+                    for(i = 0; i < steps; i++){
                         if (moves[i] === "влево"){
                             dLeft -= 50;
+                            ant.style.backgroundImage = "url('pics/ant_l.png')";
                         } else if (moves[i] === "вправо"){
                             dLeft += 50;
+                            ant.style.backgroundImage = "url('pics/ant_r.png')";
                         } else if (moves[i] === "вверх"){
                             dTop -= 50;
                         } else if (moves[i] === "вниз"){
                             dTop += 50;
                         }
                     }
-                    i = steps - 1;
-                    let stepProgress = progress - stepFraction * i;
-                    console.log(i + " " + stepProgress);
-                    let koefficient = 650;
-                    if (moves[i] === "влево"){
-                        dLeft -= koefficient * stepProgress;
-                        ant.style.backgroundImage = "url('pics/ant_l.png')";
-                    } else if (moves[i] === "вправо"){
-                        dLeft += koefficient * stepProgress;
-                        ant.style.backgroundImage = "url('pics/ant_r.png')";
-                    } else if (moves[i] === "вверх"){
-                        dTop -= koefficient * stepProgress;
-                    } else if (moves[i] === "вниз"){
-                        dTop += koefficient * stepProgress;
-                    }
+
                     ant.style.top = dTop + "px";
                     ant.style.left = dLeft + "px";
                 }
